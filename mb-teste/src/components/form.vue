@@ -33,7 +33,7 @@
       <span class="labelTitle">CPF</span>
       <input type="text" class="input" v-model="formData.cpf">
       <span class="labelTitle">Data de Nascimento</span>
-      <input type="date" class="input" v-model="formData.birthdate">
+      <input type="text" class="input" v-model="formData.birthdate" placeholder="DD/MM/YYYY">
       <span class="labelTitle">Telefone</span>
       <input type="tel" class="input" v-model="formData.phone">
     </div>
@@ -44,7 +44,7 @@
       <span class="labelTitle">CNPJ</span>
       <input type="text" class="input" v-model="formData.cnpj">
       <span class="labelTitle">Data de Abertura</span>
-      <input type="date" class="input" v-model="formData.openingDate">
+      <input type="text" class="input" v-model="formData.openingDate" placeholder="DD/MM/YYYY">
       <span class="labelTitle">Telefone</span>
       <input type="tel" class="input" v-model="formData.phone">
     </div>
@@ -150,6 +150,21 @@ export default {
       return emailRegex.test(email);
     };
 
+    const validateDate = (dateString) => {
+      const [day, month, year] = dateString.split('/').map(Number);
+
+      if (isNaN(day) || isNaN(month) || isNaN(year)) return false;
+
+      if (year < 1000 || year > 2024) return false;
+
+      if (month < 1 || month > 12) return false;
+
+      const daysInMonth = new Date(year, month, 0).getDate();
+      if (day < 1 || day > daysInMonth) return false;
+
+      return true;
+    };
+
     const validateFields = () => {
       if (currentStep.value === 1) {
         return formData.value.email.trim() !== '' &&
@@ -158,17 +173,19 @@ export default {
         if (formData.value.isIndividual) {
           return formData.value.name.trim() !== '' &&
                 formData.value.cpf.trim() !== '' &&
-                formData.value.birthdate.trim() !== '' &&
+                validateDate(formData.value.birthdate) && 
                 formData.value.phone.trim() !== '';
         } else if (formData.value.isLegalEntity) {
           return formData.value.companyName.trim() !== '' &&
                 formData.value.cnpj.trim() !== '' &&
-                formData.value.openingDate.trim() !== '' &&
+                validateDate(formData.value.openingDate) &&
                 formData.value.phone.trim() !== '';
         }
       } else if (currentStep.value === 3) {
         return formData.value.password.trim() !== '';
       }
+
+      return false
     };
 
 
@@ -267,8 +284,8 @@ export default {
   border-radius: 8px;
   margin-top: 8px;
   border: 1px solid #f2be94;
-  width: 100%; /* Largura máxima */
-  max-width: 400px; /* Defina uma largura máxima */
+  width: 100%;
+  max-width: 400px;
   padding: 8px 17px;
 }
 
