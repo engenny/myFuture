@@ -60,19 +60,32 @@
 
     <div v-if="currentStep === 4">
       <div class="step4-container">
-        <span class="labelTitleReview">Email: {{ formData.email }}</span>
+        <span class="labelTitleReview">Email:</span>
+        <input type="text" class="input" v-model="formData.email" readonly>
         <template v-if="formData.isIndividual">
-          <span class="labelTitleReview">Nome: {{ formData.name }}</span>
-          <span class="labelTitleReview">CPF: {{ formData.cpf }}</span>
-          <span class="labelTitleReview">Data de Nascimento: {{ formData.birthdate }}</span>
+          <span class="labelTitleReview">Nome:</span>
+          <input type="text" class="input" v-model="formData.name" readonly>
+          <span class="labelTitleReview">Cpf:</span>
+          <input type="text" class="input" v-model="formData.cpf" placeholder="XXX-XXX-XXX-XX" readonly>
+          <span class="labelTitleReview">Data de nascimento:</span>
+          <input type="text" class="input" v-model="formData.birthdate" placeholder="DD/MM/YYYY" readonly>
         </template>
         <template v-else-if="formData.isLegalEntity">
-          <span class="labelTitleReview">Razão Social: {{ formData.companyName }}</span>
-          <span class="labelTitleReview">CNPJ: {{ formData.cnpj }}</span>
-          <span class="labelTitleReview">Data de Abertura: {{ formData.openingDate }}</span>
+          <span class="labelTitleReview">Razão social:</span>
+          <input type="text" class="input" v-model="formData.companyName" readonly>
+          <span class="labelTitleReview">Cnpj</span>
+          <input type="text" class="input" v-model="formData.cnpj" placeholder="XX.XXX.XXX/XXXX-XX" readonly>
+          <span class="labelTitleReview">Data de nascimento:</span>
+          <input type="text" class="input" v-model="formData.openingDate" placeholder="DD/MM/YYYY" readonly>
         </template>
-        <span class="labelTitleReview">Telefone: {{ formData.phone }}</span>
-        <span class="labelTitleReview">Senha: {{ formData.password }}</span>
+        <span class="labelTitleReview">Telefone:</span>
+        <input type="text" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxx" readonly>
+        <span class="labelTitleReview">Senha:</span>
+        <input type="password" class="input" v-model="formData.password" placeholder="Senha" readonly>
+        <span v-if="formData.password && formData.password.length < 8" class="error-message">
+          <br>
+          senha deve ter no mínimo 8 caracteres
+        </span>
       </div>
     </div>
 
