@@ -52,6 +52,10 @@
     <div v-if="currentStep === 3">
       <p class="label">Defina uma senha:</p>
       <input type="password" class="input" v-model="formData.password" placeholder="Senha">
+      <span v-if="formData.password && formData.password.length < 8" class="error-message">
+        <br>
+        senha deve ter no mínimo 8 caracteres
+      </span>
     </div>
 
     <div v-if="currentStep === 4">
@@ -196,6 +200,10 @@ export default {
       return formData.value.phone.replace(/\D/g, '').length >= 10;
     };
 
+    const validatePassword = () => {
+      return formData.value.password.length >= 8;
+    };
+
     const validateFields = () => {
       if (currentStep.value === 1) {
         return formData.value.email.trim() !== '' &&
@@ -263,7 +271,8 @@ export default {
       formatCPF,
       formatDate,
       formatPhone,
-      validatePhone
+      validatePhone,
+      validatePassword
     };
   }
 };
@@ -374,5 +383,13 @@ export default {
   color: green;
   text-align: center;
   margin-top: 20px;
+}
+
+.error-message {
+  margin-top: 20px;
+  font-family: sans-serif;
+  font-size: 14px;
+  color: rgb(133, 14, 14);
+  text-align: center;
 }
 </style>
