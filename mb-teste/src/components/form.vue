@@ -33,7 +33,7 @@
       <span class="labelTitle">CPF</span>
       <input type="text" class="input" v-model="formData.cpf" placeholder="XXX-XXX-XXX-XX" @input="formatCPF">
       <span class="labelTitle">Data de Nascimento</span>
-      <input type="text" class="input" v-model="formData.birthdate" placeholder="DD/MM/YYYY" @input="formatDate">
+      <input type="text" class="input" v-model="formData.birthdate" placeholder="DD/MM/YYYY" @input="formatDate('birthdate')">
       <span class="labelTitle">Telefone</span>
       <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxx" @input="formatPhone">
     </div>
@@ -42,9 +42,9 @@
       <span class="labelTitle">Razão Social</span>
       <input type="text" class="input" v-model="formData.companyName">
       <span class="labelTitle">CNPJ</span>
-      <input type="text" class="input" v-model="formData.cnpj" placeholder="XX.XXX.XXX/XXXX-XX">
+      <input type="text" class="input" v-model="formData.cnpj" placeholder="XX.XXX.XXX/XXXX-XX" @input="formatCNPJ">
       <span class="labelTitle">Data de Abertura</span>
-      <input type="text" class="input" v-model="formData.openingDate" placeholder="DD/MM/YYYY" @input="formatDate">
+      <input type="text" class="input" v-model="formData.openingDate" placeholder="DD/MM/YYYY" @input="formatDate('openingDate')">
       <span class="labelTitle">Telefone</span>
       <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxx" @input="formatPhone">
     </div>
@@ -109,8 +109,8 @@
 <script>
 import { ref } from 'vue';
 import './formStyle.css';
+// import { popostRegistrationUserst } from '../services/formCreateUserAuth'
 
-// TODO: Email permitindo no step 1 ser qualquer um e liberando botão
 // Adicionar mensagem de erro quando digitar algo errado no step 2
 // melhorar o design..
 
@@ -187,6 +187,45 @@ export default {
       return true;
     };
 
+    const validateCNPJ = (cnpj) => {
+      const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
+      if (!cnpjRegex.test(cnpj)) return false;
+
+      const digits = cnpj.replace(/\D/g, '');
+
+      let sum = 0;
+      let factor = 5;
+      for (let i = 0; i < 12; i++) {
+        sum += parseInt(digits.charAt(i)) * factor--;
+        if (factor < 2) factor = 9;
+      }
+      let remainder = sum % 11;
+      let digit = remainder < 2 ? 0 : 11 - remainder;
+      if (parseInt(digits.charAt(12)) !== digit) return false;
+
+      sum = 0;
+      factor = 6;
+      for (let i = 0; i < 13; i++) {
+        sum += parseInt(digits.charAt(i)) * factor--;
+        if (factor < 2) factor = 9;
+      }
+      remainder = sum % 11;
+      digit = remainder < 2 ? 0 : 11 - remainder;
+      if (parseInt(digits.charAt(13)) !== digit) return false;
+
+      return true;
+    };
+
+    const formatCNPJ = () => {
+      let value = formData.value.cnpj.replace(/\D/g, '');
+      if (value.length > 14) {
+        value = value.slice(0, 14);
+      }
+
+      formData.value.cnpj = value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    };
+
+
     const formatCPF = () => {
       let value = formData.value.cpf.replace(/\D/g, '');
       if (value.length > 11) {
@@ -195,13 +234,17 @@ export default {
       formData.value.cpf = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1-$2-$3-$4');
     };
 
-    const formatDate = () => {
-      let value = formData.value.birthdate.replace(/\D/g, '');
+    const formatDate = (fieldName) => {
+      let value = formData.value[fieldName].replace(/\D/g, '');
       if (value.length > 8) {
         value = value.slice(0, 8);
       }
 
-      formData.value.birthdate = value.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+      if (fieldName === 'openingDate') {
+        formData.value[fieldName] = value.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+      } else {
+        formData.value[fieldName] = value.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+      }
     };
 
     const formatPhone = () => {
@@ -229,14 +272,14 @@ export default {
       } else if (currentStep.value === 2) {
         if (formData.value.isIndividual) {
           return formData.value.name.trim() !== '' &&
-                formData.value.cpf.trim() !== '' &&
+                formData.value.cpf.trim().length === 11 &&
                 validateDate(formData.value.birthdate) && 
-                formData.value.phone.trim() !== '';
+                formData.value.phone.trim().length === 14;
         } else if (formData.value.isLegalEntity) {
           return formData.value.companyName.trim() !== '' &&
-                formData.value.cnpj.trim() !== '' &&
-                validateDate(formData.value.openingDate) &&
-                formData.value.phone.trim() !== '';
+                formData.value.cnpj.trim().length === 18 &&
+                formData.value.openingDate.trim().length === 10 &&
+                formData.value.phone.trim().length === 14;
         }
       } else if (currentStep.value === 3) {
         return formData.value.password.trim() !== '';
@@ -254,8 +297,11 @@ export default {
       formData.value.isLegalEntity = false;
     };
 
-     const submitForm = () => {
-       setTimeout(() => {
+    const submitForm = async () => {
+      try {
+        // aqui seria a chamada se houvesse o back ativo
+        // await popostRegistrationUserst(formData.value);
+
         formData.value = {
           email: '',
           isIndividual: false,
@@ -269,10 +315,11 @@ export default {
           phone: '',
           password: ''
         };
-
         currentStep.value = 5;
         showSuccessMessage.value = true;
-      }, 1000);
+      } catch (error) {
+        console.error('Erro ao enviar o formulário de registro, revise suas informações ou entre em contato com seu representante', error.message);
+      }
     };
 
     return {
@@ -290,7 +337,9 @@ export default {
       formatDate,
       formatPhone,
       validatePhone,
-      validatePassword
+      validatePassword,
+      formatCNPJ,
+      validateCNPJ,
     };
   }
 };
