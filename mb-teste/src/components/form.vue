@@ -111,9 +111,6 @@ import { ref } from 'vue';
 import './formStyle.css';
 // import { popostRegistrationUserst } from '../services/formCreateUserAuth'
 
-// Adicionar mensagem de erro quando digitar algo errado no step 2
-// melhorar o design..
-
 export default {
   name: 'FormCreateUser',
   setup() {
@@ -272,22 +269,21 @@ export default {
       } else if (currentStep.value === 2) {
         if (formData.value.isIndividual) {
           return formData.value.name.trim() !== '' &&
-                formData.value.cpf.trim().length === 11 &&
+                formData.value.cpf.replace(/\D/g, '').length === 11 &&
                 validateDate(formData.value.birthdate) && 
-                formData.value.phone.trim().length === 14;
+                formData.value.phone.replace(/\D/g, '').length === 11;
         } else if (formData.value.isLegalEntity) {
           return formData.value.companyName.trim() !== '' &&
-                formData.value.cnpj.trim().length === 18 &&
-                formData.value.openingDate.trim().length === 10 &&
-                formData.value.phone.trim().length === 14;
+                formData.value.cnpj.replace(/\D/g, '').length === 14 &&
+                validateDate(formData.value.openingDate) && 
+                formData.value.phone.replace(/\D/g, '').length === 11;
         }
       } else if (currentStep.value === 3) {
         return formData.value.password.trim() !== '';
       }
 
-      return false
+      return false;
     };
-
 
     const uncheckIndividual = () => {
       formData.value.isIndividual = false;
