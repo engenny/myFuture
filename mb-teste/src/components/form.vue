@@ -31,22 +31,22 @@
       <span class="labelTitle">Nome</span>
       <input type="text" class="input" v-model="formData.name">
       <span class="labelTitle">CPF</span>
-      <input type="text" class="input" v-model="formData.cpf">
+      <input type="text" class="input" v-model="formData.cpf" placeholder="XXX-XXX-XXX-XX" @input="formatCPF">
       <span class="labelTitle">Data de Nascimento</span>
-      <input type="text" class="input" v-model="formData.birthdate" placeholder="DD/MM/YYYY">
+      <input type="text" class="input" v-model="formData.birthdate" placeholder="DD/MM/YYYY" @input="formatDate">
       <span class="labelTitle">Telefone</span>
-      <input type="tel" class="input" v-model="formData.phone">
+      <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxx" @input="formatPhone">
     </div>
     <div v-if="currentStep === 2 && formData.isLegalEntity" class="step2-container">
       <!-- Renderização condicional dos campos de entrada para pessoa jurídica -->
       <span class="labelTitle">Razão Social</span>
       <input type="text" class="input" v-model="formData.companyName">
       <span class="labelTitle">CNPJ</span>
-      <input type="text" class="input" v-model="formData.cnpj">
+      <input type="text" class="input" v-model="formData.cnpj" placeholder="XX.XXX.XXX/XXXX-XX">
       <span class="labelTitle">Data de Abertura</span>
-      <input type="text" class="input" v-model="formData.openingDate" placeholder="DD/MM/YYYY">
+      <input type="text" class="input" v-model="formData.openingDate" placeholder="DD/MM/YYYY" @input="formatDate">
       <span class="labelTitle">Telefone</span>
-      <input type="tel" class="input" v-model="formData.phone">
+      <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxx" @input="formatPhone">
     </div>
 
     <div v-if="currentStep === 3">
@@ -165,6 +165,37 @@ export default {
       return true;
     };
 
+    const formatCPF = () => {
+      let value = formData.value.cpf.replace(/\D/g, '');
+      if (value.length > 11) {
+        value = value.slice(0, 11);
+      }
+      formData.value.cpf = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1-$2-$3-$4');
+    };
+
+    const formatDate = () => {
+      let value = formData.value.birthdate.replace(/\D/g, '');
+      if (value.length > 8) {
+        value = value.slice(0, 8);
+      }
+
+      formData.value.birthdate = value.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+    };
+
+    const formatPhone = () => {
+      let value = formData.value.phone.replace(/\D/g, '');
+
+      if (value.length > 11) {
+        value = value.slice(0, 11);
+      }
+    
+      formData.value.phone = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    };
+
+    const validatePhone = () => {
+      return formData.value.phone.replace(/\D/g, '').length >= 10;
+    };
+
     const validateFields = () => {
       if (currentStep.value === 1) {
         return formData.value.email.trim() !== '' &&
@@ -228,7 +259,11 @@ export default {
       uncheckLegalEntity,
       validateFields,
       submitForm,
-      showSuccessMessage
+      showSuccessMessage,
+      formatCPF,
+      formatDate,
+      formatPhone,
+      validatePhone
     };
   }
 };
