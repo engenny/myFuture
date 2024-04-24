@@ -110,6 +110,10 @@
 import { ref } from 'vue';
 import './formStyle.css';
 
+// TODO: Email permitindo no step 1 ser qualquer um e liberando botão
+// Adicionar mensagem de erro quando digitar algo errado no step 2
+// melhorar o design..
+
 export default {
   name: 'FormCreateUser',
   setup() {
