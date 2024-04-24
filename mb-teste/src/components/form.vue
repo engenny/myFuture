@@ -2,7 +2,7 @@
   <div class="card">
     <div class="form-container">
       <div class="currentStepStyle">
-        <p>Etapa {{ currentStep }} de 4</p>
+        <p>Etapa {{ currentStep }} de 5</p>
       </div>
     <div>
       <span class="title">{{ stepTitles[currentStep - 1] }}</span>
@@ -56,30 +56,34 @@
 
     <div v-if="currentStep === 4">
       <div class="step4-container">
-        <span class="label">Email: {{ formData.email }}</span>
+        <span class="labelTitleReview">Email: {{ formData.email }}</span>
         <template v-if="formData.isIndividual">
-          <span class="label">Nome: {{ formData.name }}</span>
-          <span class="label">CPF: {{ formData.cpf }}</span>
-          <span class="label">Data de Nascimento: {{ formData.birthdate }}</span>
+          <span class="labelTitleReview">Nome: {{ formData.name }}</span>
+          <span class="labelTitleReview">CPF: {{ formData.cpf }}</span>
+          <span class="labelTitleReview">Data de Nascimento: {{ formData.birthdate }}</span>
         </template>
         <template v-else-if="formData.isLegalEntity">
-          <span class="label">Razão Social: {{ formData.companyName }}</span>
-          <span class="label">CNPJ: {{ formData.cnpj }}</span>
-          <span class="label">Data de Abertura: {{ formData.openingDate }}</span>
+          <span class="labelTitleReview">Razão Social: {{ formData.companyName }}</span>
+          <span class="labelTitleReview">CNPJ: {{ formData.cnpj }}</span>
+          <span class="labelTitleReview">Data de Abertura: {{ formData.openingDate }}</span>
         </template>
-        <span class="label">Telefone: {{ formData.phone }}</span>
-        <span class="label">Senha: {{ formData.password }}</span>
+        <span class="labelTitleReview">Telefone: {{ formData.phone }}</span>
+        <span class="labelTitleReview">Senha: {{ formData.password }}</span>
       </div>
     </div>
 
     <!-- Botões de navegação -->
     <div class="btns">
-      <button @click="previousStep" v-if="currentStep !== 1" class="btn-back">
+      <button @click="previousStep" v-if="currentStep !== 1 && currentStep !== 5" class="btn-back">
         Voltar
       </button>
-    <button @click="nextStep" v-if="currentStep !== 4 && validateFields()" class="btn-continue">
-      Continuar
-    </button>
+      <button @click="nextStep" v-if="currentStep !== 4 && currentStep !== 5 && validateFields()" class="btn-continue">
+        Continuar
+      </button>
+      <button @click="submitForm" v-if="currentStep === 4" class="btn-continue">
+        Cadastrar
+      </button>
+        <p v-if="showSuccessMessage && currentStep === 5" class="success-message">Cadastro concluído com sucesso!</p>
     </div>
     </div>
   </div>
@@ -92,6 +96,7 @@ export default {
   name: 'FormCreateUser',
   setup() {
     const currentStep = ref(1);
+    const showSuccessMessage = ref(false);
     const formData = ref({
       email: '',
       isIndividual: false,
@@ -110,7 +115,8 @@ export default {
       'Seja bem-vindo(a)!',
       'Informações Pessoais',
       'Senha de Acesso',
-      'Revisão das Informações'
+      'Revisão das Informações',
+      'Cadastro finalizado, entraremos em contato para mais informações <3'
     ];
 
     const nextStep = () => {
@@ -128,6 +134,8 @@ export default {
         currentStep.value++;
       } else if (currentStep.value === 3) {
         currentStep.value++;
+      } else if (currentStep.value === 4) {
+        submitForm()
       }
     };
 
@@ -138,7 +146,6 @@ export default {
     };
 
     const validateEmail = (email) => {
-      // Utilize uma expressão regular para validar o formato do email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     };
@@ -173,6 +180,27 @@ export default {
       formData.value.isLegalEntity = false;
     };
 
+     const submitForm = () => {
+       setTimeout(() => {
+        formData.value = {
+          email: '',
+          isIndividual: false,
+          isLegalEntity: false,
+          name: '',
+          cpf: '',
+          birthdate: '',
+          companyName: '',
+          cnpj: '',
+          openingDate: '',
+          phone: '',
+          password: ''
+        };
+
+        currentStep.value = 5;
+        showSuccessMessage.value = true;
+      }, 1000);
+    };
+
     return {
       currentStep,
       formData,
@@ -181,7 +209,9 @@ export default {
       previousStep,
       uncheckIndividual,
       uncheckLegalEntity,
-      validateFields
+      validateFields,
+      submitForm,
+      showSuccessMessage
     };
   }
 };
@@ -224,6 +254,7 @@ export default {
 }
 
 .checkbox-container {
+  cursor: pointer;
   display: flex;
   justify-content: center;
   margin-top: 24px;
@@ -252,6 +283,14 @@ export default {
   font-size: 14px;
   color: #000000;
   margin-top: 8px;
+
+}
+
+.labelTitleReview {
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #000000;
+  margin-top: 12px;
 }
 
 .title {
@@ -275,5 +314,13 @@ export default {
   display: flex;
   flex-direction: column;
   margin-top: 24px;
+}
+
+.success-message {
+  font-family: sans-serif;
+  font-size: 18px;
+  color: green;
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
