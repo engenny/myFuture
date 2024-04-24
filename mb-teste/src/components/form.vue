@@ -7,22 +7,25 @@
     <div>
       <span class="title">{{ stepTitles[currentStep - 1] }}</span>
     </div>
+
     <!-- Cadastro email -->
     <div v-if="currentStep === 1">
       <p class="label">Endereço de email:</p>
       <input type="text" v-model="formData.email" class="input">
     </div>
+
     <!-- Checkbox para informar qual o tipo de cadastro -->
     <div v-if="currentStep === 1">
       <div class="checkbox-container">
         <label>
-          <input type="checkbox" v-model="formData.isIndividual"> Pessoa física
+          <input type="radio" v-model="formData.isIndividual" @change="uncheckLegalEntity"> Pessoa física
         </label>
         <label>
-          <input type="checkbox" v-model="formData.isLegalEntity"> Pessoa Juridica
+          <input type="radio" v-model="formData.isLegalEntity" @change="uncheckIndividual"> Pessoa Juridica
         </label>
       </div>
     </div>
+
     <div v-if="currentStep === 2 && formData.isIndividual" class="step2-container">
       <!-- Renderização condicional dos campos de entrada para pessoa física -->
       <span class="labelTitle">Nome</span>
@@ -45,10 +48,12 @@
       <span class="labelTitle">Telefone</span>
       <input type="tel" class="input" v-model="formData.phone">
     </div>
+
     <div v-if="currentStep === 3">
       <p class="label">Defina uma senha:</p>
       <input type="password" class="input" v-model="formData.password" placeholder="Senha">
     </div>
+
     <div v-if="currentStep === 4">
       <div class="step4-container">
         <span class="label">Email: {{ formData.email }}</span>
@@ -66,14 +71,15 @@
         <span class="label">Senha: {{ formData.password }}</span>
       </div>
     </div>
+
     <!-- Botões de navegação -->
     <div class="btns">
       <button @click="previousStep" v-if="currentStep !== 1" class="btn-back">
         Voltar
       </button>
-      <button @click="nextStep" v-if="currentStep !== 4" class="btn-continue">
-        Continuar
-      </button>
+    <button @click="nextStep" v-if="currentStep !== 4 && validateFields()" class="btn-continue">
+      Continuar
+    </button>
     </div>
     </div>
   </div>
@@ -137,12 +143,45 @@ export default {
       return emailRegex.test(email);
     };
 
+    const validateFields = () => {
+      if (currentStep.value === 1) {
+        return formData.value.email.trim() !== '' &&
+              (formData.value.isIndividual || formData.value.isLegalEntity);
+      } else if (currentStep.value === 2) {
+        if (formData.value.isIndividual) {
+          return formData.value.name.trim() !== '' &&
+                formData.value.cpf.trim() !== '' &&
+                formData.value.birthdate.trim() !== '' &&
+                formData.value.phone.trim() !== '';
+        } else if (formData.value.isLegalEntity) {
+          return formData.value.companyName.trim() !== '' &&
+                formData.value.cnpj.trim() !== '' &&
+                formData.value.openingDate.trim() !== '' &&
+                formData.value.phone.trim() !== '';
+        }
+      } else if (currentStep.value === 3) {
+        return formData.value.password.trim() !== '';
+      }
+    };
+
+
+    const uncheckIndividual = () => {
+      formData.value.isIndividual = false;
+    };
+
+    const uncheckLegalEntity = () => {
+      formData.value.isLegalEntity = false;
+    };
+
     return {
       currentStep,
       formData,
       stepTitles,
       nextStep,
       previousStep,
+      uncheckIndividual,
+      uncheckLegalEntity,
+      validateFields
     };
   }
 };
