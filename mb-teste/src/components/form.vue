@@ -35,7 +35,7 @@
       <span class="labelTitle">Data de Nascimento</span>
       <input type="text" class="input" v-model="formData.birthdate" placeholder="DD/MM/YYYY" @input="formatDate('birthdate')">
       <span class="labelTitle">Telefone</span>
-      <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxx" @input="formatPhone">
+      <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxxx" @input="formatPhone">
     </div>
     <div v-if="currentStep === 2 && formData.isLegalEntity" class="step2-container">
       <!-- Renderização condicional dos campos de entrada para pessoa jurídica -->
@@ -46,7 +46,7 @@
       <span class="labelTitle">Data de Abertura</span>
       <input type="text" class="input" v-model="formData.openingDate" placeholder="DD/MM/YYYY" @input="formatDate('openingDate')">
       <span class="labelTitle">Telefone</span>
-      <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxx" @input="formatPhone">
+      <input type="tel" class="input" v-model="formData.phone" placeholder="(xx) xxxx-xxxxx" @input="formatPhone">
     </div>
 
     <div v-if="currentStep === 3">
@@ -100,7 +100,10 @@
       <button @click="submitForm" v-if="currentStep === 4" class="btn-continue">
         Cadastrar
       </button>
-        <p v-if="showSuccessMessage && currentStep === 5" class="success-message">Cadastro concluído com sucesso!</p>
+        <div v-if="showSuccessMessage && currentStep === 5">
+        <p class="success-message">Cadastro concluído com sucesso!</p>
+        <img class="gifHappy" src="https://media.giphy.com/media/VIKa3CjZDCoymNcBY5/giphy.gif?cid=82a1493bnr9nysesmwadc9nik2dqnenq8p0z7fjrywivq5uf&ep=v1_gifs_trending&rid=giphy.gif&ct=g">
+        </div>
     </div>
     </div>
   </div>
