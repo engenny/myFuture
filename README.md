@@ -6,7 +6,7 @@
 npm i
 ```
 ```
-npm run serve
+npm run dev
 ```
 ## Demo
 -- Link com video rodando 1 teste.
