@@ -37,5 +37,3 @@ The following tools were used in the construction of the project:
 
 -Se cadastre, válido lembrar que o back ficou comentado por conta de não possui o link dele. Por enquanto ficou mockado.
 
-## Pontos:
-Oii pessoal :D espero que gostem e me aceitem nesse timaço espero somar muito com vocês.
