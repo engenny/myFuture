@@ -8,10 +8,6 @@ npm i
 ```
 npm run dev
 ```
-## Demo
--- Link com video rodando 1 teste.
-(https://www.loom.com/share/32f15950eeb3470ea127648675384e74)](https://www.loom.com/share/32f15950eeb3470ea127648675384e74?sid=3697e207-efa2-4a4d-8b7c-fb9e483a3ecd)
-
 ## ⚛️ Technologies
 The following tools were used in the construction of the project:
 
